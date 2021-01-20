@@ -1,0 +1,42 @@
+{
+  "scan_parameters": {
+    "scan_duration": 1100,
+    "interval_between_scans": 0,
+    "perform_beacon_ranging": false,
+    "meters_to_trigger_promotion": 1,
+    "limit_promotions_to_once_per_trip": true,
+    "beacon_layouts": [
+      "m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24",
+      "m:0-1=2a00,i:2-3,i:4-5,p:6-6"
+    ]
+  },
+  "beacons": [
+    {
+      "beacon_mac" : "C4:64:E3:C6:FB:A6",
+      "promotion_title": "Beacon 1",
+      "promotion_image": "/sdcard/beacon_1.png",
+      "promotion_message": "Test message for beacon 1",
+      "promotion_splash": "50% Off",
+      "TTS_enabled": true,
+      "TTS": "Beacon 1 is within range"
+    },
+    {
+      "beacon_mac" : "C4:64:E3:C6:F5:95",
+      "promotion_title": "Beacon 2",
+      "promotion_image": "/sdcard/beacon_2.png",
+      "promotion_message" : "Test message for beacon 2",
+      "promotion_splash": "50% Off",
+      "TTS_enabled": true,
+      "TTS": "Beacon 2 is within range"
+    },
+    {
+      "beacon_mac" : "C4:64:E3:C6:F0:1F",
+      "promotion_title": "Beacon 3",
+      "promotion_image": "/sdcard/beacon_3.png",
+      "promotion_message" : "Test message for beacon 3",
+      "promotion_splash": "50% Off",
+      "TTS_enabled": true,
+      "TTS": "Beacon 3 is within range"
+    }
+  ]
+}
