@@ -123,9 +123,13 @@ public class BeaconManagerWrapper {
         mBeaconRegions.put(region, true);
     }
 
+    public void declareRegionExit(Region region) {
+        mBeaconRegions.put(region, false);
+    }
+
     public void resetAllRegionStates() {
         for (Region region : mBeaconRegions.keySet()) {
-            mBeaconRegions.put(region, false);
+            declareRegionExit(region);
         }
     }
 

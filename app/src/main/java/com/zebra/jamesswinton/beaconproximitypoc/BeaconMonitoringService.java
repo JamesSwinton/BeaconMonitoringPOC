@@ -34,6 +34,7 @@ import org.altbeacon.beacon.Region;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -120,7 +121,7 @@ public class BeaconMonitoringService extends Service implements BeaconConsumer, 
             // Check if we detect a beacon that we've registered in our config
             if (configBeacon.getBeaconMac().matches(region.getBluetoothAddress())) {
                 // Check if we should perform our own ranging, or fire promotion as soon as we see beacon
-                if (App.mConfig.getScanParameters().getPerformBeaconRanging()) {
+                if (App.mConfig.getScanParameters().getPerformBeaconRanging() || App.mConfig.getScanParameters().getPerformBeaconRssiRanging() ) {
                     // Start Ranging on Beacons
                     try {
                         mBeaconManager.startRangingBeaconsInRegion(region);
@@ -148,15 +149,33 @@ public class BeaconMonitoringService extends Service implements BeaconConsumer, 
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+
+        int rssi;
         // Loop Beacons Within Range
         for (Beacon beacon: beacons) {
-            // Verify Distance against Configuration
-            if (beacon.getDistance() < App.mConfig.getScanParameters().getMetersToTriggerPromotion()) {
-                Log.i(this.getClass().getName(), "Within range of beacon, checking if unique");
-                // We're within range, so lets find the beacon details in our config
-                for (Config.Beacon configBeacon : App.mConfig.getBeacons()) {
-                    if (configBeacon.getBeaconMac().matches(region.getBluetoothAddress())) {
-                        displayPromotion(configBeacon, region);
+            if (App.mConfig.getScanParameters().getPerformBeaconRanging()) {
+                // Verify Distance against Configuration
+                if (beacon.getDistance() < App.mConfig.getScanParameters().getMetersToTriggerPromotion()) {
+                    Log.i(this.getClass().getName(), "Check against distance:" + beacon.getDistance() + " rssi:" + beacon.getRssi() + ", checking if unique");
+                    // We're within range, so lets find the beacon details in our config
+                    for (Config.Beacon configBeacon : App.mConfig.getBeacons()) {
+                        if (configBeacon.getBeaconMac().matches(region.getBluetoothAddress())) {
+                            displayPromotion(configBeacon, region);
+                        }
+                    }
+                }
+            }
+            if (App.mConfig.getScanParameters().getPerformBeaconRssiRanging()) {
+                // Verify Distance against RSSI threshold
+                rssi = beacon.getRssi();
+                Log.i(this.getClass().getName(), "MAC:"+ beacon.getBluetoothAddress() + " distance:" + beacon.getDistance() + " rssi:" + rssi);
+                if (rssi > App.mConfig.getScanParameters().getThresholdRssiToTriggerPromotions()) {
+                    // We're within range, so lets find the beacon details in our config
+                    for (Config.Beacon configBeacon : App.mConfig.getBeacons()) {
+                        if (configBeacon.getBeaconMac().matches(region.getBluetoothAddress())) {
+//                            Log.i(this.getClass().getName(), configBeacon.getBeaconName() + " : " + configBeacon.getBeaconMac()  + " - Distance:" + beacon.getDistance() + " rssi:" + rssi);
+                            displayPromotion(configBeacon, region);
+                        }
                     }
                 }
             }
@@ -164,23 +183,35 @@ public class BeaconMonitoringService extends Service implements BeaconConsumer, 
     }
 
     private void displayPromotion(Config.Beacon configBeacon, Region region) {
-        // Verify we haven't been within range of this beacon this shopping trip
-        if (!App.mConfig.getScanParameters().getLimitPromotions() ||
-                (App.mConfig.getScanParameters().getLimitPromotions()
-                        && !mBeaconManager.mBeaconRegions.get(region))) {
-            Log.i(this.getClass().getName(), "Region is unique. Displaying promotion");
 
+        // Verify we haven't been within range of this beacon this shopping trip
+        if (!mBeaconManager.mBeaconRegions.get(region)) {
+
+//        if (!App.mConfig.getScanParameters().getLimitPromotions() ||
+//                (App.mConfig.getScanParameters().getLimitPromotions()
+//                        && !mBeaconManager.mBeaconRegions.get(region))) {
+
+            Log.i(this.getClass().getName(), "Region is unique. Displaying promotion");
             // Store Entered Region
             mBeaconManager.declareRegionEntered(region);
 
             // Display Promotion
             mPromotionDisplayManager.showAlertDialogPromotion(configBeacon.getPromotionTitle(),
                     configBeacon.getPromotionMessage(), configBeacon.getPromotionImage(),
-                    configBeacon.getPromotionSplash());
+                    configBeacon.getPromotionSplash(), configBeacon.getPromotionTimeout());
 
             // Play Sound
             if (configBeacon.getTTSEnabled()) {
                 mPromotionDisplayManager.playTtsPromotion(configBeacon.getTTS());
+            }
+
+            if (!App.mConfig.getScanParameters().getLimitPromotions() ) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBeaconManager.declareRegionExit(region);
+                    }
+                }, (App.mConfig.getScanParameters().getLimitPromotionsTimeout() * 1000)); //timeout given is in seconds
             }
         }
     }
