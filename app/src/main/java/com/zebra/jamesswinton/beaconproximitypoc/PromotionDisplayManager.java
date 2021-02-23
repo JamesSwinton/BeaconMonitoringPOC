@@ -44,7 +44,7 @@ public class PromotionDisplayManager {
     }
 
     public void showAlertDialogPromotion(String title, String message, String imageFilePath,
-                                         @Nullable String offerText) {
+                                         @Nullable String offerText, Integer timeout) {
         mDataBinding.title.setText(title);
         mDataBinding.message.setText(message);
         if (!TextUtils.isEmpty(offerText)) {
@@ -79,6 +79,16 @@ public class PromotionDisplayManager {
 
         mPromotionDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
         mPromotionDialog.show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mPromotionDialog != null && mPromotionDialog.isShowing()) {
+                    mPromotionDialog.dismiss();
+                }
+            }
+        }, timeout*1000); //timeout given is in seconds
+
     }
 
     public void playTtsPromotion(String textToSpeak) {

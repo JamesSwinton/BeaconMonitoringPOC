@@ -3,6 +3,8 @@ package com.zebra.jamesswinton.beaconproximitypoc;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 public class Config {
@@ -43,10 +45,19 @@ public class Config {
         private Boolean performBeaconRanging;
         @SerializedName("meters_to_trigger_promotion")
         @Expose
-        private Integer metersToTriggerPromotion;
+        private Double metersToTriggerPromotion;
+        @SerializedName("perform_beacon_rssi_ranging")
+        @Expose
+        private Boolean performBeaconRssiRanging;
+        @SerializedName("threshold_rssi_to_trigger_promotions")
+        @Expose
+        private Integer thresholdRssiToTriggerPromotions;
         @SerializedName("limit_promotions_to_once_per_trip")
         @Expose
         private Boolean limitPromotions;
+        @SerializedName("limit_promotions_timeout")
+        @Expose
+        private Integer limitPromotionsTimeout;
         @SerializedName("beacon_layouts")
         @Expose
         private List<String> beaconLayouts = null;
@@ -75,12 +86,27 @@ public class Config {
             this.performBeaconRanging = performBeaconRanging;
         }
 
-        public Integer getMetersToTriggerPromotion() {
+        public Double getMetersToTriggerPromotion() {
             return metersToTriggerPromotion;
         }
 
-        public void setMetersToTriggerPromotion(Integer metersToTriggerPromotion) {
+        public void setMetersToTriggerPromotion(Double metersToTriggerPromotion) {
             this.metersToTriggerPromotion = metersToTriggerPromotion;
+        }
+
+        public Boolean getPerformBeaconRssiRanging() {
+            return performBeaconRssiRanging;
+        }
+
+        public void setPerformBeaconRssiRanging(Boolean performBeaconRssiRanging) {
+            this.performBeaconRssiRanging = performBeaconRssiRanging;
+        }
+
+        public Integer getThresholdRssiToTriggerPromotions() {
+            return thresholdRssiToTriggerPromotions;
+        }
+        public void setThresholdRssiToTriggerPromotions(Integer thresholdRssiToTriggerPromotions) {
+            this.thresholdRssiToTriggerPromotions = thresholdRssiToTriggerPromotions;
         }
 
         public Boolean getLimitPromotions() {
@@ -91,6 +117,14 @@ public class Config {
             this.limitPromotions = limitPromotions;
         }
 
+        public Integer getLimitPromotionsTimeout() {
+            return limitPromotionsTimeout;
+        }
+
+        public void setLimitPromotionsTimeout(Integer limitPromotionsTimeout) {
+            this.limitPromotionsTimeout = limitPromotionsTimeout;
+        }
+
         public List<String> getBeaconLayouts() {
             return beaconLayouts;
         }
@@ -98,11 +132,13 @@ public class Config {
         public void setBeaconLayouts(List<String> beaconLayouts) {
             this.beaconLayouts = beaconLayouts;
         }
-
     }
 
     public class Beacon {
 
+        @SerializedName("beacon_name")
+        @Expose
+        private String beaconName;
         @SerializedName("beacon_mac")
         @Expose
         private String beaconMac;
@@ -118,12 +154,34 @@ public class Config {
         @SerializedName("promotion_splash")
         @Expose
         private String promotionSplash;
+        @SerializedName("promotion_timeout")
+        @Expose
+        private Integer promotionTimeout;
         @SerializedName("TTS_enabled")
         @Expose
         private Boolean tTSEnabled;
         @SerializedName("TTS")
         @Expose
         private String tTS;
+
+        private Long showPromotionTimestamp;
+
+        public Long getShowPromotionTimestamp() {
+            return showPromotionTimestamp;
+        }
+
+        public void setShowPromotionTimestamp() {
+            Date date = new Date();
+            this.showPromotionTimestamp = date.getTime();
+        }
+
+        public String getBeaconName() {
+            return beaconName;
+        }
+
+        public void setBeaconName(String beaconMac) {
+            this.beaconName = beaconName;
+        }
 
         public String getBeaconMac() {
             return beaconMac;
@@ -163,6 +221,14 @@ public class Config {
 
         public void setPromotionSplash(String promotionSplash) {
             this.promotionSplash = promotionSplash;
+        }
+
+        public Integer getPromotionTimeout() {
+            return promotionTimeout;
+        }
+
+        public void setPromotionTimeout(Integer promotionTimeout) {
+            this.promotionTimeout = promotionTimeout;
         }
 
         public Boolean getTTSEnabled() {
