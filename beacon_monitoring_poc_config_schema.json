@@ -1,0 +1,88 @@
+{
+  "scan_parameters": {
+    "scan_duration": {
+		"type": integer,
+		"description": "How long to scan for beacons each cycle - minimum 1100"
+	},
+    "interval_between_scans": {
+		"type": integer,
+		"description": "delay between scan cycles - minimum 0"
+	},
+    "perform_beacon_ranging": {
+		"type": boolean,
+		"description": "If true app will start performing ranging calculations once beacon is detected. 
+		Promotion will be displayed when beacon is deemed to be within the 'meters_to_trigger_promotion' distance. 
+		Note, this can cause a delay of up to 20secs as ranging calculations are averaged over this time to increase 
+		accuracy. If this value is set to false, the promotion will be displayed as soon as the beacon is detected."
+	},
+    "meters_to_trigger_promotion": {
+		"type": double,
+		"description": "distance from beacon in meters to display promotion - requires 'perform_beacon_ranging' to be true"
+	},
+    "perform_beacon_rssi_ranging": {
+		"type": boolean,
+		"description": "If true app will start performing ranging calculations once beacon is detected. 
+		Promotion will be displayed when beacon is deemed to be within the 'threshold_rssi_to_trigger_promotions' level. 
+		Note, this can cause a delay of up to 20secs as ranging calculations are averaged over this time to increase 
+		accuracy. If this value is set to false, the promotion will be displayed as soon as the beacon is detected."
+	},
+    "threshold_rssi_to_trigger_promotions": {
+		"type": integer,
+		"description": "rssi level value to trigger promotions based on received rssi signal strength. For example -70"
+	},
+    "limit_promotions_to_once_per_trip": {
+		"type": boolean,
+		"description": "If set to true, promotions will only be displayed once per beacon until the device is placed on charge"
+	},
+    "limit_promotions_timeout": {
+		"type": integer,
+		"description": "timeout in seconds, promotions will be shown once per x seconds"
+	},
+    "beacon_layouts": {
+		"type": array,
+		"description": "String array of all beacon layouts to detect - defaults to MPACT & iBeacon"
+	}
+  },
+  "beacons": {
+	"type": array,
+	"description": "array of beacons to detect & the promtion to display once detected",
+	"properties": {
+		"beacon_name" : {
+			"type": String,
+			"description": "Name of the beacon, will be used in the log files only"
+		},
+		"beacon_mac" : {
+			"type": String,
+			"description": "Beacon MAC address"
+		},
+		"promotion_title": {
+			"type": String,
+			"description": "Title of promotional pop-up"
+		},
+		"promotion_image": {
+			"type": String,
+			"description": "Absolute file path of image to display in promotion - this can be left empty"
+		},
+		"promotion_message": {
+			"type": String,
+			"description": "Sub-text of promotional pop-up"
+		},
+		"promotion_splash": {
+			"type": String,
+			"description": "Text to display in red-circle in top-right of promtion - this can be left empty"
+		},
+		"promotion_timeout": {
+			"type": integer,
+			"description": "Timeout in seconds, promotion will be show for x seconds and will be closed automatically afterwards."
+		},
+		"TTS_enabled": {
+			"type": boolean,
+			"description": "If set to true, String value of TTS will be vocalised by the device"
+		},
+		"TTS": {
+			"type": String,
+			"description": "Text to vocalise when displaying promotion"
+		},
+	}
+  }
+}
